@@ -27,8 +27,6 @@ TART07/Content/Collections
 TART07/Content/Developers/**
 TART07/Content/StarterContent/**
 
-# Blender Add-On
+# Blender Add-On    
 *.fbx
-*.json
 !leaf.fbx
-!leaf.json
