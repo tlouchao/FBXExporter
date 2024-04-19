@@ -1,0 +1,34 @@
+# Unreal
+Binaries
+DerivedDataCache
+Intermediate
+Saved
+Platforms
+.venv
+*/__pycache__/
+.vscode
+.vs
+*.ps1
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
+TART07/Content/__ExternalActors__/**
+TART07/Content/__ExternalObjects__/**
+TART07/Content/Characters/**
+TART07/Content/LevelPrototyping/**
+TART07/Content/ThirdPerson/**
+TART07/Content/Collections
+TART07/Content/Developers/**
+TART07/Content/StarterContent/**
+
+# Blender Add-On
+*.fbx
+*.json
+!leaf.fbx
+!leaf.json

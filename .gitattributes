@@ -1,0 +1,5 @@
+TART07/Content/TART07/** filter=lfs diff=lfs merge=lfs -text
+TART07/TART07.uproject filter=lfs diff=lfs merge=lfs -text
+leaf.fbx filter=lfs diff=lfs merge=lfs -text
+leaf.blend filter=lfs diff=lfs merge=lfs -text
+leaf.blend1 filter=lfs diff=lfs merge=lfs -text
