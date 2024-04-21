@@ -8,8 +8,7 @@ bl_info = {
     "version": (1, 0, 0),
     "blender": (4, 0, 0),
     "location": "3D Viewport > Sidebar > FBX Exporter",
-    "description": "Exports the selected mesh, armature, and animation to" + \
-        "Unreal Engine 5",
+    "description": "Exports the selected mesh, armature, and animation to Unreal Engine 5",
     "category": "Import-Export",
 }
 

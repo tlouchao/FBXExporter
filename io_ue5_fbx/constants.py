@@ -7,6 +7,11 @@ class ToolInfo(Enum):
     LABEL = 'Send to Unreal'
 
 
+class PanelTypes(Enum):
+    FILEPATH = 'filepath'
+    BLENDER = 'blender'
+
+
 class BlenderTypes:
     SKELETON = 'ARMATURE'
     MESH = 'MESH'
