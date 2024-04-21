@@ -4,8 +4,6 @@ DerivedDataCache
 Intermediate
 Saved
 Platforms
-.venv
-*/__pycache__/
 .vscode
 .vs
 *.ps1
@@ -27,6 +25,8 @@ TART07/Content/Collections
 TART07/Content/Developers/**
 TART07/Content/StarterContent/**
 
-# Blender Add-On    
+# Blender Add-On
+*.zip   
 *.fbx
 !leaf.fbx
+**/__pycache__/
