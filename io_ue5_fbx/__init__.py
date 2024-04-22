@@ -5,8 +5,8 @@ from .ui import panel
 bl_info = {
     "name": "Export FBX from Blender to Unreal Engine 5 (.fbx)",
     "author": "tlouchao",
-    "version": (1, 0, 0),
-    "blender": (4, 0, 0),
+    "version": (0, 0, 1),
+    "blender": (4, 1, 0),
     "location": "3D Viewport > Sidebar > FBX Exporter",
     "description": "Exports the selected mesh, armature, and animation to Unreal Engine 5",
     "category": "Import-Export",

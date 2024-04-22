@@ -1,14 +1,7 @@
-from enum import Enum
-from .constants import \
-(
-    PanelTypes,
-    BlenderTypes,
-    UnrealTypes,
-    Smoothing, 
-    Scaling,
-)
-
 import bpy
+import os
+from enum import Enum
+
 from bpy.props import \
 (
     StringProperty, 
@@ -18,29 +11,34 @@ from bpy.props import \
     EnumProperty, 
     PointerProperty,
 )
-    
 
+from .constants import \
+(
+    PanelTypes,
+    BlenderTypes,
+    UnrealTypes,
+    Smoothing, 
+    Scaling,
+)
+    
 class PG_Properties(bpy.types.PropertyGroup):
 
     fp_project_dir: StringProperty(
         name="Project Directory",
-        description="Unreal Engine 5 Project Directory",
-        default="C:\\Users\\tiffa\\Documents\\Unreal Projects\\MyProject",
+        description="Unreal Engine 5 project directory",
     )
 
-    fp_project_subdir: StringProperty(
-        name="Content Subdirectory (Optional)",
-        description="Content Subdirectory (Optional)",
-        default="Content",
+    fp_project_subdir: StringProperty( 
+        name="Subdirectory (Optional)",
+        description="Subdirectory (optional) relative to the project directory",
     )
 
     fp_file_name: StringProperty(
-        name="FBX File Name",
+        name="File Name",
         description="FBX File Name",
-        default="square",
     )
 
-    bl_units: EnumProperty(
+    br_units: EnumProperty(
         name="Units",
         description="Scene Units",
         items=[
@@ -50,7 +48,7 @@ class PG_Properties(bpy.types.PropertyGroup):
         default="local",
     )
 
-    bl_smoothing: EnumProperty(
+    br_smoothing: EnumProperty(
         name="Smoothing",
         description="Geometry Smoothing",
         items=[
@@ -61,7 +59,7 @@ class PG_Properties(bpy.types.PropertyGroup):
         default="face",
     )
 
-    bl_leaf_bones: BoolProperty(
+    br_leaf_bones: BoolProperty(
         name="Add Leaf Bones",
         description="Uncheck add leaf bones",
         default=False,
@@ -69,23 +67,59 @@ class PG_Properties(bpy.types.PropertyGroup):
 
     @classmethod
     def get_props(cls, prop_type):
+        '''
+        Helper function to get custom properties
+        '''
         prefix = ""
         match prop_type:
             case PanelTypes.FILEPATH:
                 prefix = "fp"
             case PanelTypes.BLENDER:
-                prefix = "bl"
-        props = cls.__annotations__
-        props = {k: props[k] for k in props if k.startswith(prefix)}
+                prefix = "br"
+            case _:
+                pass
+        ann = cls.__annotations__
+        props = {k: ann[k] for k in ann if k.startswith(prefix)}
         return props
+
+    @classmethod
+    def get_prop_name(cls, prop_name):
+        '''
+        Helper function to get the name attribute of custom property
+        '''
+        ann = cls.__annotations__
+        prop = ann[prop_name]
+        return prop.keywords.get('name') if prop else None
+
+    @classmethod
+    def get_placeholder(cls, prop_name):
+        '''
+        StringProperty() does not have a placeholder attribute.
+        This helper function returns a placeholder string
+        independent of the given custom property.
+        '''
+        ann = cls.__annotations__
+        prop = ann[prop_name]
+        if prop:
+           match prop_name:
+            case 'fp_project_dir':
+                return 'C:/Unreal Projects/'
+            case 'fp_project_subdir':
+                return 'Content/'
+            case _:
+                return ''
 
 
 def register():
     """
     Registers the property group class and adds it to the context
     """
-    if not bpy.types.PropertyGroup.bl_rna_get_subclass_py('PG_Properties'):
+    p = bpy.types.PropertyGroup.bl_rna_get_subclass_py('PG_Properties')
+    if (p is None):
         bpy.utils.register_class(PG_Properties)
+
+    # actual property is stored at bpy.context.scene.io_ue5_fbx
+    if not hasattr(bpy.types.Scene, 'io_ue5_fbx'):
         bpy.types.Scene.io_ue5_fbx = PointerProperty(type=PG_Properties)
 
 
@@ -93,7 +127,10 @@ def unregister():
     """
     Unregisters the property group class and deletes it from the context
     """
-    if bpy.types.PropertyGroup.bl_rna_get_subclass_py('PG_Properties'):
+    p = bpy.types.PropertyGroup.bl_rna_get_subclass_py('PG_Properties')
+    if (p is not None):
         bpy.utils.unregister_class(PG_Properties)
+
+    # actual property is stored at bpy.context.scene.io_ue5_fbx
     if hasattr(bpy.types.Scene, 'io_ue5_fbx'):
         del bpy.types.Scene.io_ue5_fbx

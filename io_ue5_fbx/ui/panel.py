@@ -1,4 +1,5 @@
 import bpy
+import os
 import inspect
 from .. import constants, operators, properties
 from ..properties import PG_Properties
@@ -15,8 +16,8 @@ class VIEW3D_PT_BLInfo:
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-        io_scene_props = scene.io_ue5_fbx
-        return [layout, io_scene_props]
+        io_props = scene.io_ue5_fbx
+        return [layout, io_props]
     
 
 class VIEW3D_PT_FBXExporter(VIEW3D_PT_BLInfo, bpy.types.Panel):
@@ -41,14 +42,42 @@ class VIEW3D_PT_Filepath(VIEW3D_PT_BLInfo, bpy.types.Panel):
 
     def draw(self, context):
 
-        [layout, io_scene_props] = super(VIEW3D_PT_Filepath, self).draw(context)
+        [layout, io_props] = super(VIEW3D_PT_Filepath, self).draw(context)
+        fp_props = PG_Properties.get_props(PanelTypes.FILEPATH)
 
-        io_props = PG_Properties.get_props(PanelTypes.FILEPATH)
-        for k, v in io_props.items():
-            label = v.keywords.get('name')
-            layout.label(text=label)
-            row = layout.row()
-            row.prop(io_scene_props, k, text='')
+        k2 = io_props.keys()
+        for k in k2:
+            j = k
+        
+        for key in fp_props:
+            if key == 'fp_project_dir' or key == 'fp_project_subdir':
+                
+                # label
+                label = PG_Properties.get_prop_name(key)
+                row = layout.row()
+                row.label(text=label)
+                
+                # edit field
+                split = layout.split(factor=0.8)
+                [lcol, rcol] = split.column(), split.column(align=True)
+
+                ph = PG_Properties.get_placeholder(key)
+                lcol.prop(io_props, key, text='', placeholder=ph)
+                rcol.operator(operators.OP_OT_Filename.bl_idname)
+
+            elif key == 'fp_file_name':
+
+                # label and edit field on same row
+                layout.row().separator()
+                split = layout.split(factor=0.8)
+                [lcol, rcol] = split.column(), split.column(align=True)
+                lsplit = lcol.split(factor=0.3)
+                [llcol, lrcol] = lsplit.column(), lsplit.column()
+
+                label = PG_Properties.get_prop_name(key)
+                llcol.label(text=label)
+                lrcol.prop(io_props, key, text='')
+                rcol.operator(operators.OP_OT_Filename.bl_idname)
 
 
 class VIEW3D_PT_Blender(VIEW3D_PT_BLInfo, bpy.types.Panel):
@@ -59,12 +88,12 @@ class VIEW3D_PT_Blender(VIEW3D_PT_BLInfo, bpy.types.Panel):
 
     def draw(self, context):
 
-        [layout, io_scene_props] = super(VIEW3D_PT_Blender, self).draw(context)
+        [layout, io_props] = super(VIEW3D_PT_Blender, self).draw(context)
+        bl_props = PG_Properties.get_props(PanelTypes.BLENDER)
 
-        io_props = PG_Properties.get_props(PanelTypes.BLENDER)
-        for k in io_props:
+        for key in bl_props:
             row = layout.row()
-            row.prop(io_scene_props, k)
+            row.prop(io_props, key)
 
 
 class VIEW3D_PT_Button(VIEW3D_PT_BLInfo, bpy.types.Panel):

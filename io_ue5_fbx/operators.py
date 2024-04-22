@@ -19,9 +19,20 @@ class OP_OT_Export(bpy.types.Operator):
         self.report({'INFO'}, f"Exported {fname}.fbx to {dname}/{content_folder}")
         return {'FINISHED'}
 
+class OP_OT_Filename(bpy.types.Operator):
+
+    bl_idname = "op.filename"
+    bl_label = "Auto"
+
+    def execute(self, context):
+        basename = os.path.basename(context.blend_data.filepath)
+        [stem, ext] = os.path.splitext(basename)
+        bpy.context.scene.io_ue5_fbx.fp_file_name = stem + '.fbx'
+        return {'FINISHED'}
 
 op_classes = [
     OP_OT_Export,
+    OP_OT_Filename,
 ]
 
 
