@@ -3,13 +3,6 @@ from enum import Enum
 
 class ToolInfo(Enum):
     NAME = 'io_ue5_fbx'
-    APP = 'blender'
-    LABEL = 'Send to Unreal'
-
-
-class PanelTypes(Enum):
-    FILEPATH = 'filepath'
-    BLENDER = 'blender'
 
 
 class BlenderTypes:
@@ -24,12 +17,18 @@ class UnrealTypes:
     ANIM_SEQUENCE = 'AnimSequence'
 
 
-class Smoothing(Enum):
+class BlenderUnits(Enum):
+    NONE = 'NONE'
+    METRIC = 'METRIC'
+    IMPERIAL = 'IMPERIAL'
+
+
+class AddonUnits(Enum):
+    LOCAL = 'All Local (Metric, Recommended)'
+    FBX = 'FBX Units Scale'
+
+
+class AddonSmoothing(Enum):
+    FACE = 'Face (Recommended)'
     EDGE = 'Edge'
-    FACE = 'Face'
     NORMALS = "Normals Only"
-
-
-class Scaling(Enum):
-    LOCAL = "All Local"
-    FBXUNITS = "FBX Units Scale"

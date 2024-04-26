@@ -30,3 +30,4 @@ TART07/Content/StarterContent/**
 *.fbx
 !leaf.fbx
 **/__pycache__/
+*/subscribe.py

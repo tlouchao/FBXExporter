@@ -14,13 +14,14 @@ from bpy.props import \
 
 from .constants import \
 (
-    PanelTypes,
     BlenderTypes,
     UnrealTypes,
-    Smoothing, 
-    Scaling,
+    BlenderUnits,
+    AddonUnits,
+    AddonSmoothing, 
 )
-    
+
+
 class PG_Properties(bpy.types.PropertyGroup):
 
     fp_project_dir: StringProperty(
@@ -38,12 +39,19 @@ class PG_Properties(bpy.types.PropertyGroup):
         description="FBX File Name",
     )
 
+    br_scale: FloatProperty(
+        name="Scale",
+        description="Scale Factor",
+        precision=2,
+        default=1,
+    )
+
     br_units: EnumProperty(
-        name="Units",
+        name="Apply Scalings",
         description="Scene Units",
         items=[
-            ('local', Scaling.LOCAL.value, '', '', 0),
-            ('fbxunits', Scaling.FBXUNITS.value, '', '', 1)
+            ('local', AddonUnits.LOCAL.value, '', '', 0),
+            ('fbx', AddonUnits.FBX.value, '', '', 1)
         ],
         default="local",
     )
@@ -52,62 +60,19 @@ class PG_Properties(bpy.types.PropertyGroup):
         name="Smoothing",
         description="Geometry Smoothing",
         items=[
-            ('face', Smoothing.FACE.value, '', '', 0),
-            ('edge', Smoothing.EDGE.value, '', '', 1),
-            ('normals', Smoothing.NORMALS.value, '', '', 2),
+            ('face', AddonSmoothing.FACE.value, '', '', 0),
+            ('edge', AddonSmoothing.EDGE.value, '', '', 1),
+            ('normals', AddonSmoothing.NORMALS.value, '', '', 2),
         ],
         default="face",
     )
 
+    # TODO: Handle armatures
     br_leaf_bones: BoolProperty(
         name="Add Leaf Bones",
         description="Uncheck add leaf bones",
         default=False,
     )
-
-    @classmethod
-    def get_props(cls, prop_type):
-        '''
-        Helper function to get custom properties
-        '''
-        prefix = ""
-        match prop_type:
-            case PanelTypes.FILEPATH:
-                prefix = "fp"
-            case PanelTypes.BLENDER:
-                prefix = "br"
-            case _:
-                pass
-        ann = cls.__annotations__
-        props = {k: ann[k] for k in ann if k.startswith(prefix)}
-        return props
-
-    @classmethod
-    def get_prop_name(cls, prop_name):
-        '''
-        Helper function to get the name attribute of custom property
-        '''
-        ann = cls.__annotations__
-        prop = ann[prop_name]
-        return prop.keywords.get('name') if prop else None
-
-    @classmethod
-    def get_placeholder(cls, prop_name):
-        '''
-        StringProperty() does not have a placeholder attribute.
-        This helper function returns a placeholder string
-        independent of the given custom property.
-        '''
-        ann = cls.__annotations__
-        prop = ann[prop_name]
-        if prop:
-           match prop_name:
-            case 'fp_project_dir':
-                return 'C:/Unreal Projects/'
-            case 'fp_project_subdir':
-                return 'Content/'
-            case _:
-                return ''
 
 
 def register():
