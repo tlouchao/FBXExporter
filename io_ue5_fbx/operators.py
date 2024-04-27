@@ -5,7 +5,7 @@ from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper
 
-from . import subscribe
+from .export import export
 from .constants import BlenderUnits, AddonUnits, AddonSmoothing
 
 
@@ -74,7 +74,7 @@ class OT_Reset(Operator):
             io_props.br_units = AddonUnits.LOCAL.name.lower()
             io_props.br_scale = 0.01
 
-        # set smoothing modifier to prevent error in Unreal 
+        # set smoothing modifier to prevent error in Unreal
         io_props.br_smoothing = AddonSmoothing.FACE.name.lower()
 
         # Armatures only. Prevent extra bones in Unreal skeleton asset
@@ -93,17 +93,20 @@ class OT_Export(Operator):
         
         io_props = context.scene.io_ue5_fbx
 
+        export.export_fbx(dir_name=io_props.fp_project_dir,
+                          subdir_name=io_props.fp_project_subdir,
+                          file_name=io_props.fp_file_name,
+                          scale=io_props.br_scale,
+                          units=io_props.br_units,
+                          smoothing=io_props.br_smoothing,
+                          add_leaf_bones = io_props.br_leaf_bones,
+                          )
+        
+        file_name = io_props.fp_file_name
         dir_name = io_props.fp_project_dir
         subdir_name = io_props.fp_project_subdir
-        stem = io_props.fp_file_name
 
-        if (dir_name == '' or dir is None):
-            dir_name = 'C:/'
-
-        filepath = os.path.join(dir_name, subdir_name, stem + '.fbx')
-        bpy.ops.export_scene.fbx(filepath=filepath)
-        
-        self.report({'INFO'}, f"Exported {stem}.fbx to {dir_name}{subdir_name}")
+        self.report({'INFO'}, f"Exported {file_name}.fbx to {dir_name}{subdir_name}")
         return {'FINISHED'}
 
 

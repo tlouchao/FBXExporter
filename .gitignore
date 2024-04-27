@@ -26,8 +26,8 @@ TART07/Content/Developers/**
 TART07/Content/StarterContent/**
 
 # Blender Add-On
-*.zip   
-*.fbx
+*.zip
+*.blend1
+!cube.fbx
 !leaf.fbx
 **/__pycache__/
-*/subscribe.py

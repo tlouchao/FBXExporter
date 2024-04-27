@@ -75,20 +75,6 @@ class VIEW3D_PT_Filepath(Base_Panel, bpy.types.Panel):
                         pass
 
             elif key == 'fp_file_name':
-
-                '''
-                # label and edit field on same row
-                layout.row().separator()
-                split = layout.split(factor=0.6)
-                [lcol, rcol] = split.column(), split.column(align=True)
-                lsplit = lcol.split(factor=0.4)
-                [llcol, lrcol] = lsplit.column(), lsplit.column()
-
-                label = io_props.bl_rna.properties.get(key).name
-                llcol.label(text=label)
-                lrcol.prop(io_props, key, text='')
-                rcol.operator(operators.OT_Filename.bl_idname)
-                '''
                 row = layout.row()
                 row.prop(io_props, key)
 
