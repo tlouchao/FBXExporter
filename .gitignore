@@ -30,4 +30,5 @@ TART07/Content/StarterContent/**
 *.blend1
 !cube.fbx
 !leaf.fbx
+image*
 **/__pycache__/

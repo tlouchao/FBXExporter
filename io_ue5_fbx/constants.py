@@ -32,3 +32,4 @@ class AddonSmoothing(Enum):
     FACE = 'Face (Recommended)'
     EDGE = 'Edge'
     NORMALS = "Normals Only"
+    

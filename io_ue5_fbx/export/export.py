@@ -2,6 +2,7 @@ import bpy
 import os
 from ..constants import AddonUnits, AddonSmoothing
 
+
 def export_fbx(dir_name,
                subdir_name,
                file_name,
@@ -10,10 +11,19 @@ def export_fbx(dir_name,
                smoothing,
                add_leaf_bones,
                ):
-
+    '''
+    Given the incoming UI properties, export the FBX File
+    '''
     # set filepath
-    if (dir_name == '' or dir is None):
+    if (dir_name == '' or dir_name is None):
         dir_name = 'C:/'
+
+    # set filename
+    if (file_name == '' or file_name is None):
+        basename = os.path.basename(bpy.context.blend_data.filepath)
+        [stem, ext] = os.path.splitext(basename)
+        file_name = stem
+
     filepath = os.path.join(dir_name, subdir_name, file_name + '.fbx')
 
     # set scale
@@ -41,11 +51,12 @@ def export_fbx(dir_name,
 
     # execute Blender operation
     bpy.ops.export_scene.fbx(filepath=filepath,
-                                use_selection=True,
-                                global_scale=global_scale,
-                                apply_unit_scale=True, 
-                                apply_scale_options=apply_scale_options,
-                                object_types={"MESH"},
-                                use_mesh_modifiers=True,
-                                mesh_smooth_type=mesh_smooth_type,
-                                add_leaf_bones=add_leaf_bones)
+                            use_selection=True,
+                            global_scale=global_scale,
+                            apply_unit_scale=True, 
+                            apply_scale_options=apply_scale_options,
+                            object_types={"MESH"},
+                            use_mesh_modifiers=True,
+                            mesh_smooth_type=mesh_smooth_type,
+                            add_leaf_bones=add_leaf_bones)
+                            

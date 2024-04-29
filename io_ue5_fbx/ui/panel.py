@@ -14,6 +14,7 @@ class Base_Panel:
     bl_category = "FBX Exporter"
     bl_context = "objectmode"
 
+
     def draw(self, context):
         layout = self.layout
         io_props = context.scene.io_ue5_fbx
@@ -25,12 +26,20 @@ class VIEW3D_PT_FBXExporter(Base_Panel, bpy.types.Panel):
     bl_idname = "VIEW3D_PT_FBXExporter"
     bl_label = "Export FBX to Unreal Engine 5"  
     
+
     @classmethod
     def poll(cls, context):
+        '''
+        Decide whether or not to show the tool based on context
+        '''
         obj = context.active_object
         return (obj is not None and obj.type == 'MESH')
     
+
     def draw(self, context):
+        '''
+        Draw the parent panel to be filled with subpanels
+        '''
         pass
 
 
@@ -40,8 +49,11 @@ class VIEW3D_PT_Filepath(Base_Panel, bpy.types.Panel):
     bl_label = "Filepath"
     bl_options = {'HEADER_LAYOUT_EXPAND'}
 
-    def draw(self, context):
 
+    def draw(self, context):
+        '''
+        Draw the filepath subpanel
+        '''
         [layout, io_props] = super(VIEW3D_PT_Filepath, self).draw(context)
         
         # filter filepath properties, reverse order
@@ -85,8 +97,11 @@ class VIEW3D_PT_Blender(Base_Panel, bpy.types.Panel):
     bl_label = "Blender"
     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw(self, context):
 
+    def draw(self, context):
+        '''
+        Draw the Blender subpanel
+        '''
         [layout, io_props] = super(VIEW3D_PT_Blender, self).draw(context)  
 
         # filter blender properties, reverse order
@@ -108,8 +123,11 @@ class VIEW3D_PT_Button(Base_Panel, bpy.types.Panel):
     bl_label = "Export"
     bl_options = {'HIDE_HEADER'}
 
+
     def draw(self, context):
-        
+        '''
+        Draw the Reset button and Export FBX Button
+        '''
         [layout, _] = super(VIEW3D_PT_Button, self).draw(context)
 
         # UI Button
@@ -118,12 +136,14 @@ class VIEW3D_PT_Button(Base_Panel, bpy.types.Panel):
         row2 = layout.row()
         row2.operator(operators.OT_Export.bl_idname)
 
+
 panel_classes = [
     VIEW3D_PT_FBXExporter,
     VIEW3D_PT_Filepath,
     VIEW3D_PT_Blender,
     VIEW3D_PT_Button,
 ]
+
 
 def register():
     """

@@ -70,7 +70,7 @@ class PG_Properties(bpy.types.PropertyGroup):
     # TODO: Handle armatures
     br_leaf_bones: BoolProperty(
         name="Add Leaf Bones",
-        description="Uncheck add leaf bones",
+        description="Uncheck add leaf bones to prevent adding extra bones",
         default=False,
     )
 

@@ -1,5 +1,6 @@
 '''
-RUN THIS SCRIPT FROM BLENDER
+RUN THIS SCRIPT FROM BLENDER. 
+Helper script to make a zipfile, then install and enable the Blender add-on.
 '''
 import bpy
 import os
