@@ -3,7 +3,6 @@ import os
 
 from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty
-from bpy_extras.io_utils import ImportHelper
 
 from .export import export
 from .constants import BlenderUnits, AddonUnits, AddonSmoothing
@@ -25,6 +24,10 @@ class Base_Filebrowser:
     
 
     def invoke(self, context, event):
+        # if project directory is set, then start navigating from this directory
+        project_dir = context.scene.io_ue5_fbx.fp_project_dir
+        if (project_dir):
+            self.directory = project_dir
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
@@ -65,13 +68,19 @@ class OT_Filebrowser_Subdir(Base_Filebrowser, Operator):
         Show the tooltip
         '''
         return cls.bl_description
-    
+
 
     def execute(self, context):
         '''
         Executes when this button is clicked. Opens a file browser.
         '''
-        context.scene.io_ue5_fbx.fp_project_subdir = self.directory
+        io_props = context.scene.io_ue5_fbx
+        project_dir = io_props.fp_project_dir
+        commonpath = os.path.commonpath([project_dir, self.directory])
+
+        # display relative directory
+        rel_project_subdir = self.directory.replace(commonpath, '')
+        context.scene.io_ue5_fbx.fp_project_subdir = rel_project_subdir
         return {'FINISHED'}
 
 
