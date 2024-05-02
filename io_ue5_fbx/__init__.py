@@ -26,10 +26,10 @@ def post_register():
     io_props = bpy.context.scene.io_ue5_fbx
 
     if (units == BlenderUnits.NONE.value):
-        io_props.br_units = AddonUnits.FBX.name.lower()
+        io_props.br_units = AddonUnits.FBX.name
         io_props.br_scale = 1
     elif (units == BlenderUnits.METRIC.value):
-        io_props.br_units = AddonUnits.LOCAL.name.lower()
+        io_props.br_units = AddonUnits.LOCAL.name
         io_props.br_scale = 0.01
     print('Post Register')
 

@@ -116,14 +116,14 @@ class OT_Reset(Operator):
 
         # set units based on Blender scene units
         if (units == BlenderUnits.NONE.value):
-            io_props.br_units = AddonUnits.FBX.name.lower()
+            io_props.br_units = AddonUnits.FBX.name
             io_props.br_scale = 1
         elif (units == BlenderUnits.METRIC.value):
-            io_props.br_units = AddonUnits.LOCAL.name.lower()
+            io_props.br_units = AddonUnits.LOCAL.name
             io_props.br_scale = 0.01
 
         # set smoothing modifier to prevent error in Unreal
-        io_props.br_smoothing = AddonSmoothing.FACE.name.lower()
+        io_props.br_smoothing = AddonSmoothing.FACE.name
 
         # Armatures only. Prevent extra bones in Unreal skeleton asset
         io_props.br_leaf_bones = False
@@ -154,7 +154,8 @@ class OT_Export(Operator):
         '''
         io_props = context.scene.io_ue5_fbx
 
-        export.export_fbx(dir_name=io_props.fp_project_dir,
+        export.export_fbx(op=self, # access to report()
+                          dir_name=io_props.fp_project_dir,
                           subdir_name=io_props.fp_project_subdir,
                           file_name=io_props.fp_file_name,
                           scale=io_props.br_scale,

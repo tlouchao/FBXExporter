@@ -50,21 +50,21 @@ class PG_Properties(bpy.types.PropertyGroup):
         name="Apply Scalings",
         description="Scene Units",
         items=[
-            ('local', AddonUnits.LOCAL.value, '', '', 0),
-            ('fbx', AddonUnits.FBX.value, '', '', 1)
+            (AddonUnits.LOCAL.name, AddonUnits.LOCAL.value, '', '', 0),
+            (AddonUnits.FBX.name, AddonUnits.FBX.value, '', '', 1)
         ],
-        default="local",
+        default=AddonUnits.LOCAL.name,
     )
 
     br_smoothing: EnumProperty(
         name="Smoothing",
         description="Geometry Smoothing",
         items=[
-            ('face', AddonSmoothing.FACE.value, '', '', 0),
-            ('edge', AddonSmoothing.EDGE.value, '', '', 1),
-            ('normals', AddonSmoothing.NORMALS.value, '', '', 2),
+            (AddonSmoothing.FACE.name, AddonSmoothing.FACE.value, '', '', 0),
+            (AddonSmoothing.EDGE.name, AddonSmoothing.EDGE.value, '', '', 1),
+            (AddonSmoothing.NORMALS.name, AddonSmoothing.NORMALS.value, '', '', 2),
         ],
-        default="face",
+        default=AddonSmoothing.FACE.name,
     )
 
     # TODO: Handle armatures
