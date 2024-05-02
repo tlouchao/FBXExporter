@@ -164,12 +164,6 @@ class OT_Export(Operator):
                           add_leaf_bones = io_props.br_leaf_bones,
                           )
         
-        file_name = io_props.fp_file_name
-        dir_name = io_props.fp_project_dir
-        subdir_name = io_props.fp_project_subdir
-
-        self.report({'INFO'}, 
-            f"Exported {file_name}.fbx to {dir_name}{subdir_name}")
         return {'FINISHED'}
 
 

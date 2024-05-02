@@ -18,7 +18,7 @@ def export_fbx(op,
 
     # -------------------------- Filepath ------------------------ #
 
-    default_dir = 'C:/'
+    default_dir = 'C:\\'
 
     # 1.) validate directory
     if os.path.isdir(dir_name):
@@ -32,7 +32,8 @@ def export_fbx(op,
                 f"Defaulting to {default_dir}")
         dir_name = default_dir
 
-    dir_concat = os.path.join(dir_name.strip('/'), subdir_name.strip('/'))
+    dir_concat = dir_name.strip('\\') + '\\' + subdir_name.strip('\\') + '\\'
+    if op: op.report({'DEBUG'}, f"Concat: {dir_concat}")
 
     # 2.) validate subdirectory
     if os.path.isdir(dir_concat):
@@ -40,35 +41,33 @@ def export_fbx(op,
     else:
         if (subdir_name == '' or subdir_name is None):
             if op: op.report({'WARNING'}, f"Empty project subdirectory. " + \
-                f"Defaulting to directory {dir_name}")
+                f"Defaulting to {dir_name}")
         else:
             if op: op.report({'WARNING'}, f"{dir_concat} does not exist. " + \
-                f"Defaulting to directory {dir_name}")
-        dir_concat = dir_name.strip('/')
+                f"Defaulting to {dir_name}")
+        dir_concat = dir_name
     
-    # 3.) validate filename
+    # 3.) validate filename. Default is the Blender filename
+    basename = os.path.basename(bpy.context.blend_data.filepath)
+    [stem, ext] = os.path.splitext(basename)
     is_valid_file_name = True
 
     if (file_name == '' or file_name is None):
         is_valid_file_name = False
-        if op: op.report({'WARNING'}, f"{file_name} . " + \
-            f"Defaulting to {default_dir}")
+        if op: op.report({'WARNING'}, f"{file_name} is empty." + \
+            f"Defaulting to {basename}")
     
     # if not null, accept only alphanumeric names which may include '_', '-'
     elif (re.match(r'[^[A-Za-z0-9_-]', file_name) is not None):
         is_valid_file_name = False    
-        if op: op.report({'WARNING'}, f"{file_name} . " + \
-            f"Defaulting to {default_dir}")
+        if op: op.report({'WARNING'}, f"{file_name} contains invalid " + \
+            f"characters. Defaulting to {basename}")
 
     if (not is_valid_file_name):
-        # default is the Blender filename
-        basename = os.path.basename(bpy.context.blend_data.filepath)
-        [stem, ext] = os.path.splitext(basename)
         file_name = stem
 
     # 4.) finally, set the filepath
     filepath = os.path.join(dir_concat, file_name + '.fbx')
-    print(filepath)
 
     # -------------------------- Blender ------------------------ #
     
@@ -95,6 +94,10 @@ def export_fbx(op,
         case AddonSmoothing.NORMALS.name:
             mesh_smooth_type = 'OFF'
 
+    
+    if op: op.report({'DEBUG'}, 
+        f"Prepare to export {file_name}.fbx to {dir_concat}")
+
     # execute Blender operation
     bpy.ops.export_scene.fbx(filepath=filepath,
                             use_selection=True,
@@ -104,4 +107,8 @@ def export_fbx(op,
                             object_types={'MESH'},
                             mesh_smooth_type=mesh_smooth_type,
                             add_leaf_bones=add_leaf_bones)
-                            
+
+    # TODO: platform agnostic paths 
+    dir_concat = dir_concat.replace('/', '\\')
+    if op: op.report({'INFO'}, 
+            f"Exported {file_name}.fbx to {dir_concat}")
