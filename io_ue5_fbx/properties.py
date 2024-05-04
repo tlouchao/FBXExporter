@@ -9,6 +9,7 @@ from bpy.props import \
     IntProperty, 
     FloatProperty, 
     EnumProperty, 
+    CollectionProperty,
     PointerProperty,
 )
 
@@ -20,7 +21,6 @@ from .constants import \
     AddonUnits,
     AddonSmoothing, 
 )
-
 
 class PG_Properties(bpy.types.PropertyGroup):
 
@@ -37,6 +37,18 @@ class PG_Properties(bpy.types.PropertyGroup):
     fp_file_name: StringProperty(
         name="File Name",
         description="FBX File Name",
+    )
+
+    ob_mesh: BoolProperty(
+        name="Mesh",
+        description="Export the selected mesh",
+        default=True,
+    )
+
+    ob_armature: BoolProperty(
+        name="Armature",
+        description="Export the selected armature",
+        default=False,
     )
 
     br_scale: FloatProperty(
@@ -75,6 +87,10 @@ class PG_Properties(bpy.types.PropertyGroup):
     )
 
 
+pg_classes = [
+    PG_Properties,
+]
+
 def register():
     """
     Registers the property group class and adds it to the context
@@ -82,10 +98,11 @@ def register():
     p = bpy.types.PropertyGroup.bl_rna_get_subclass_py('PG_Properties')
     if (p is None):
         bpy.utils.register_class(PG_Properties)
-
-    # actual property is stored at bpy.context.scene.io_ue5_fbx
+    
+    # reference to properties at bpy.context.scene.io_ue5_fbx
     if not hasattr(bpy.types.Scene, 'io_ue5_fbx'):
-        bpy.types.Scene.io_ue5_fbx = PointerProperty(type=PG_Properties)
+        bpy.types.Scene.io_ue5_fbx = \
+            PointerProperty(type=PG_Properties)
 
 
 def unregister():
@@ -96,6 +113,6 @@ def unregister():
     if (p is not None):
         bpy.utils.unregister_class(PG_Properties)
 
-    # actual property is stored at bpy.context.scene.io_ue5_fbx
+    # delete reference to properties
     if hasattr(bpy.types.Scene, 'io_ue5_fbx'):
         del bpy.types.Scene.io_ue5_fbx

@@ -108,7 +108,7 @@ def export_fbx(op,
                             mesh_smooth_type=mesh_smooth_type,
                             add_leaf_bones=add_leaf_bones)
 
-    # TODO: platform agnostic paths 
+    # TODO: handle backslash and forward slash 
     dir_concat = dir_concat.replace('/', '\\')
-    if op: op.report({'INFO'}, 
+    if op: op.report({'INFO'},
             f"Exported {file_name}.fbx to {dir_concat}")

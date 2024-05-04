@@ -6,7 +6,7 @@ class ToolInfo(Enum):
 
 
 class BlenderTypes:
-    SKELETON = 'ARMATURE'
+    ARMATURE = 'ARMATURE'
     MESH = 'MESH'
     ANIMATION = 'ANIMATION'
 

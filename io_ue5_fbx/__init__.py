@@ -1,12 +1,12 @@
 import bpy
-from . import constants, operators, properties
+from . import operators, properties
 from .constants import BlenderUnits, AddonUnits
 from .ui import panel
 
 bl_info = {
     "name": "Export FBX from Blender to Unreal Engine 5 (.fbx)",
     "author": "tlouchao",
-    "version": (0, 0, 1),
+    "version": (0, 0, 3),
     "blender": (4, 1, 0),
     "location": "3D Viewport > Sidebar > FBX Exporter",
     "description": "Exports the selected mesh, armature, and animation to Unreal Engine 5",

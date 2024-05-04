@@ -1,8 +1,7 @@
 import bpy
 import os
-import inspect
-from .. import constants, operators, properties
-from ..constants import BlenderUnits, AddonUnits
+from .. import operators, properties
+from ..constants import BlenderTypes, BlenderUnits, AddonUnits
 
 
 class Base_Panel:
@@ -33,7 +32,9 @@ class VIEW3D_PT_FBXExporter(Base_Panel, bpy.types.Panel):
         Decide whether or not to show the tool based on context
         '''
         obj = context.active_object
-        return (obj is not None and obj.type == 'MESH')
+        return (obj is not None and \
+               (obj.type == BlenderTypes.MESH or \
+                obj.type == BlenderTypes.ARMATURE))
     
 
     def draw(self, context):
@@ -56,7 +57,7 @@ class VIEW3D_PT_Filepath(Base_Panel, bpy.types.Panel):
         '''
         [layout, io_props] = super(VIEW3D_PT_Filepath, self).draw(context)
         
-        # filter filepath properties, reverse order
+        # filter filepath properties
         ann = io_props.__annotations__.keys()
         fp_keys = [k for k in ann if k.startswith('fp')]
     
@@ -91,20 +92,42 @@ class VIEW3D_PT_Filepath(Base_Panel, bpy.types.Panel):
                 row.prop(io_props, key)
 
 
-class VIEW3D_PT_Blender(Base_Panel, bpy.types.Panel):
+class VIEW3D_PT_Objects(Base_Panel, bpy.types.Panel):
 
     bl_parent_id = "VIEW3D_PT_FBXExporter"
-    bl_label = "Blender"
+    bl_label = "Object Types"
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
+
+    def draw(self, context):
+        '''
+        Draw the Objects subpanel
+        '''
+        [layout, io_props] = super(VIEW3D_PT_Objects, self).draw(context)
+
+        # filter blender properties
+        ann = io_props.__annotations__.keys()
+        ob_keys = [k for k in ann if k.startswith('ob')]
+        
+        # UI Layout
+        row = layout.row(align=True) # props on the same row
+        for key in ob_keys:
+            row.prop(io_props, key, toggle=1)
+
+
+class VIEW3D_PT_Modify(Base_Panel, bpy.types.Panel):
+
+    bl_parent_id = "VIEW3D_PT_FBXExporter"
+    bl_label = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
 
     def draw(self, context):
         '''
-        Draw the Blender subpanel
+        Draw the Modify subpanel
         '''
-        [layout, io_props] = super(VIEW3D_PT_Blender, self).draw(context)  
+        [layout, io_props] = super(VIEW3D_PT_Modify, self).draw(context)  
 
-        # filter blender properties, reverse order
+        # filter blender properties
         ann = io_props.__annotations__.keys()
         br_keys = [k for k in ann if k.startswith('br')]
 
@@ -112,12 +135,9 @@ class VIEW3D_PT_Blender(Base_Panel, bpy.types.Panel):
         for key in br_keys:
             row = layout.row()
             row.prop(io_props, key)
-            if (key == 'br_scale' and \
-                io_props.br_units == AddonUnits.FBX.name.lower()):
-                row.enabled = False
 
 
-class VIEW3D_PT_Button(Base_Panel, bpy.types.Panel):
+class VIEW3D_PT_Export(Base_Panel, bpy.types.Panel):
 
     bl_parent_id = "VIEW3D_PT_FBXExporter"
     bl_label = "Export"
@@ -128,7 +148,7 @@ class VIEW3D_PT_Button(Base_Panel, bpy.types.Panel):
         '''
         Draw the Reset button and Export FBX Button
         '''
-        [layout, _] = super(VIEW3D_PT_Button, self).draw(context)
+        [layout, _] = super(VIEW3D_PT_Export, self).draw(context)
 
         # UI Button
         row1 = layout.row()
@@ -137,11 +157,12 @@ class VIEW3D_PT_Button(Base_Panel, bpy.types.Panel):
         row2.operator(operators.OT_Export.bl_idname)
 
 
-panel_classes = [
+ui_classes = [
     VIEW3D_PT_FBXExporter,
     VIEW3D_PT_Filepath,
-    VIEW3D_PT_Blender,
-    VIEW3D_PT_Button,
+    VIEW3D_PT_Objects,
+    VIEW3D_PT_Modify,
+    VIEW3D_PT_Export,
 ]
 
 
@@ -149,13 +170,13 @@ def register():
     """
     Registers the ui classes when the addon is enabled.
     """
-    for panel_class in panel_classes:
-        bpy.utils.register_class(panel_class)
+    for ui_class in ui_classes:
+        bpy.utils.register_class(ui_class)
 
 
 def unregister():
     """
     Unregisters the ui classes when the addon is disabled.
     """
-    for panel_class in reversed(panel_classes):
-        bpy.utils.unregister_class(panel_class)
+    for ui_class in reversed(ui_classes):
+        bpy.utils.unregister_class(ui_class)
