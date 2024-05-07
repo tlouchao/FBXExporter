@@ -98,6 +98,7 @@ class VIEW3D_PT_Objects(Base_Panel, bpy.types.Panel):
     bl_label = "Object Types"
     bl_options = {'HEADER_LAYOUT_EXPAND'}
 
+
     def draw(self, context):
         '''
         Draw the Objects subpanel
@@ -112,6 +113,7 @@ class VIEW3D_PT_Objects(Base_Panel, bpy.types.Panel):
         row = layout.row(align=True) # props on the same row
         for key in ob_keys:
             row.prop(io_props, key, toggle=1)
+
 
 
 class VIEW3D_PT_Modify(Base_Panel, bpy.types.Panel):

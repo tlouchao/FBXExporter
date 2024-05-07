@@ -42,7 +42,7 @@ class PG_Properties(bpy.types.PropertyGroup):
     ob_mesh: BoolProperty(
         name="Mesh",
         description="Export the selected mesh",
-        default=True,
+        default=False,
     )
 
     ob_armature: BoolProperty(

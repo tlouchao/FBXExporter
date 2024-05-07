@@ -5,6 +5,7 @@ from ..constants import AddonUnits, AddonSmoothing
 
 
 def export_fbx(op,
+               context,
                dir_name,
                subdir_name,
                file_name,
@@ -94,7 +95,13 @@ def export_fbx(op,
         case AddonSmoothing.NORMALS.name:
             mesh_smooth_type = 'OFF'
 
-    
+    # auto select active object, if nothing is selected
+    if (not context.selected_objects):
+        ao = context.active_object
+        ao.select_set(True)
+        if op: op.report({'WARNING'}, f"Object(s) not selected. " + \
+            f"Defaulting to active object \"{ao.name}\"")
+
     if op: op.report({'DEBUG'}, 
         f"Prepare to export {file_name}.fbx to {dir_concat}")
 

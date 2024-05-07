@@ -155,6 +155,7 @@ class OT_Export(Operator):
         io_props = context.scene.io_ue5_fbx
 
         export.export_fbx(op=self, # access to report()
+                          context=context,
                           dir_name=io_props.fp_project_dir,
                           subdir_name=io_props.fp_project_subdir,
                           file_name=io_props.fp_file_name,
