@@ -31,10 +31,23 @@ class VIEW3D_PT_FBXExporter(Base_Panel, bpy.types.Panel):
         '''
         Decide whether or not to show the tool based on context
         '''
-        obj = context.active_object
-        return (obj is not None and \
-               (obj.type == BlenderTypes.MESH or \
-                obj.type == BlenderTypes.ARMATURE))
+        obj_types_list = [BlenderTypes.MESH, BlenderTypes.ARMATURE]
+        
+        obj_sel = context.selected_objects
+        obj_act = context.active_object
+        found = False
+
+        # check selected objects
+        for obj in obj_sel:
+            if (obj.type in obj_types_list):
+                found = True
+                break
+
+        # check active object
+        if obj_act is not None and obj_act.type in obj_types_list:
+            found = True
+
+        return found
     
 
     def draw(self, context):

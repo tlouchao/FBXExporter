@@ -60,7 +60,7 @@ def export_fbx(op,
     
     # if not null, accept only alphanumeric names which may include '_', '-'
     elif (re.match(r'[^[A-Za-z0-9_-]', file_name) is not None):
-        is_valid_file_name = False    
+        is_valid_file_name = False
         if op: op.report({'WARNING'}, f"{file_name} contains invalid " + \
             f"characters. Defaulting to {basename}")
 

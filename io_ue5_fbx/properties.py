@@ -22,6 +22,32 @@ from .constants import \
     AddonSmoothing, 
 )
 
+def update_mesh_object_type(self, context):
+    '''
+    After toggling boolean property, select the first mesh object from scene
+    '''
+    ob_mesh = context.scene.io_ue5_fbx.ob_mesh
+    objs = bpy.context.view_layer.objects
+
+    for obj in objs:
+        if obj.type == BlenderTypes.MESH:
+            obj.select_set(ob_mesh)
+            break
+
+
+def update_armature_object_type(self, context):
+    '''
+    After toggling boolean property, select the first armature object from scene
+    '''
+    ob_armature = context.scene.io_ue5_fbx.ob_armature
+    objs = bpy.context.view_layer.objects
+
+    for obj in objs:
+        if obj.type == BlenderTypes.ARMATURE:
+            obj.select_set(ob_armature)
+            break        
+
+
 class PG_Properties(bpy.types.PropertyGroup):
 
     fp_project_dir: StringProperty(
@@ -43,12 +69,14 @@ class PG_Properties(bpy.types.PropertyGroup):
         name="Mesh",
         description="Export the selected mesh",
         default=False,
+        update=update_mesh_object_type,
     )
 
     ob_armature: BoolProperty(
         name="Armature",
         description="Export the selected armature",
         default=False,
+        update=update_armature_object_type,
     )
 
     br_scale: FloatProperty(

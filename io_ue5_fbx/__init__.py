@@ -1,5 +1,5 @@
 import bpy
-from . import operators, properties, subscribe
+from . import operators, properties, depsgraph
 from .constants import BlenderTypes, BlenderUnits, AddonUnits
 from .ui import panel
 
@@ -20,30 +20,19 @@ modules = [
     panel,
 ]
 
-# for event listeners
-owner = bpy
-
 def post_register():
     '''
     Initialize add-on values that require the scene context
     Cannot modify context in UIPanel.draw(), so modify in post_register()
     '''
-    # get context       
-    units = bpy.context.scene.unit_settings.system
     io_props = bpy.context.scene.io_ue5_fbx
 
     # initialize selected object types
-    obj = bpy.context.active_object
-
-    if (obj.type == BlenderTypes.MESH):
-        io_props.ob_mesh = True
-        io_props.ob_armature = False
-
-    elif (obj.type == BlenderTypes.ARMATURE):
-        io_props.ob_mesh = False
-        io_props.ob_armature = True
+    depsgraph.update_selected_objects()
 
     # initialize scale
+    units = bpy.context.scene.unit_settings.system
+
     if (units == BlenderUnits.NONE.value):
         io_props.br_units = AddonUnits.FBX.name
         io_props.br_scale = 1
@@ -52,7 +41,7 @@ def post_register():
         io_props.br_scale = 0.01
 
     # add event listeners
-    subscribe.subscribe(owner)
+    depsgraph.register()
 
     print('Post Register')
 
@@ -78,10 +67,9 @@ def unregister():
     Unregisters the addon classes when the addon is disabled.
     """
     try:
-        
-        # remove event listeners
-        subscribe.unsubscribe(owner)
 
+        depsgraph.unregister()
+        
         # unregister
         for module in reversed(modules):
             module.unregister()
