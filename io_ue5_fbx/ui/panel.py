@@ -128,28 +128,56 @@ class VIEW3D_PT_Objects(Base_Panel, bpy.types.Panel):
             row.prop(io_props, key, toggle=1)
 
 
-
-class VIEW3D_PT_Modify(Base_Panel, bpy.types.Panel):
+class VIEW3D_PT_Transform(Base_Panel, bpy.types.Panel):
 
     bl_parent_id = "VIEW3D_PT_FBXExporter"
-    bl_label = "Modify"
+    bl_label = "Transform"
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
+
+
+    def draw(self, context):
+        '''
+        Draw the Transform subpanel
+        '''
+        [layout, io_props] = super(VIEW3D_PT_Transform, self).draw(context)  
+
+        # filter blender properties
+        ann = io_props.__annotations__.keys()
+        tr_keys = [k for k in ann if k.startswith('tr')]
+
+        # UI Layout
+        for key in tr_keys:
+            row = layout.row()
+            row.prop(io_props, key)
+
+            # disable if object is not selected
+            row.enabled = io_props.ob_mesh or io_props.ob_armature
+
+
+class VIEW3D_PT_Armature(Base_Panel, bpy.types.Panel):
+
+    bl_parent_id = "VIEW3D_PT_FBXExporter"
+    bl_label = "Armature"
     bl_options = {'DEFAULT_CLOSED'}
 
 
     def draw(self, context):
         '''
-        Draw the Modify subpanel
+        Draw the Transform subpanel
         '''
-        [layout, io_props] = super(VIEW3D_PT_Modify, self).draw(context)  
+        [layout, io_props] = super(VIEW3D_PT_Armature, self).draw(context)  
 
         # filter blender properties
         ann = io_props.__annotations__.keys()
-        br_keys = [k for k in ann if k.startswith('br')]
+        ar_keys = [k for k in ann if k.startswith('ar')]
 
         # UI Layout
-        for key in br_keys:
-            row = layout.row()
+        row = layout.row()
+        for key in ar_keys:
             row.prop(io_props, key)
+
+            # disable if armature is not selected
+            row.enabled = io_props.ob_armature
 
 
 class VIEW3D_PT_Export(Base_Panel, bpy.types.Panel):
@@ -163,7 +191,7 @@ class VIEW3D_PT_Export(Base_Panel, bpy.types.Panel):
         '''
         Draw the Reset button and Export FBX Button
         '''
-        [layout, _] = super(VIEW3D_PT_Export, self).draw(context)
+        [layout, io_props] = super(VIEW3D_PT_Export, self).draw(context)
 
         # UI Button
         row1 = layout.row()
@@ -171,19 +199,27 @@ class VIEW3D_PT_Export(Base_Panel, bpy.types.Panel):
         row2 = layout.row()
         row2.operator(operators.OT_Export.bl_idname)
 
+        # disable the Export button if the following is true:
+        # at least one object is not selected, or file name is not defined
+        if (not io_props.fp_file_name or not context.selected_objects):
+            row2.enabled = False
+        else:
+            row2.enabled = True
+
 
 ui_classes = [
     VIEW3D_PT_FBXExporter,
     VIEW3D_PT_Filepath,
     VIEW3D_PT_Objects,
-    VIEW3D_PT_Modify,
+    VIEW3D_PT_Transform,
+    VIEW3D_PT_Armature,
     VIEW3D_PT_Export,
 ]
 
 
 def register():
     """
-    Registers the ui classes when the addon is enabled.
+    Registers the ui classes when the addon is enabled
     """
     for ui_class in ui_classes:
         bpy.utils.register_class(ui_class)
@@ -191,7 +227,7 @@ def register():
 
 def unregister():
     """
-    Unregisters the ui classes when the addon is disabled.
+    Unregisters the ui classes when the addon is disabled
     """
     for ui_class in reversed(ui_classes):
         bpy.utils.unregister_class(ui_class)

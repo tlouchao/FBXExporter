@@ -79,14 +79,14 @@ class PG_Properties(bpy.types.PropertyGroup):
         update=update_armature_object_type,
     )
 
-    br_scale: FloatProperty(
+    tr_scale: FloatProperty(
         name="Scale",
         description="Scale Factor",
         precision=2,
         default=1,
     )
 
-    br_units: EnumProperty(
+    tr_units: EnumProperty(
         name="Apply Scalings",
         description="Scene Units",
         items=[
@@ -96,7 +96,7 @@ class PG_Properties(bpy.types.PropertyGroup):
         default=AddonUnits.LOCAL.name,
     )
 
-    br_smoothing: EnumProperty(
+    tr_smoothing: EnumProperty(
         name="Smoothing",
         description="Geometry Smoothing",
         items=[
@@ -107,11 +107,16 @@ class PG_Properties(bpy.types.PropertyGroup):
         default=AddonSmoothing.FACE.name,
     )
 
-    # TODO: Handle armatures
-    br_leaf_bones: BoolProperty(
+    ar_leaf_bones: BoolProperty(
         name="Add Leaf Bones",
         description="Uncheck add leaf bones to prevent adding extra bones",
         default=False,
+    )
+
+    ar_bake_animation: BoolProperty(
+        name="Bake Animation",
+        description="Export at least one key of animation for all bones",
+        default=True,
     )
 
 

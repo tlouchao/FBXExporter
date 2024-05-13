@@ -5,7 +5,7 @@ from bpy.types import Operator
 from bpy.props import StringProperty, BoolProperty
 
 from .export import export
-from .constants import BlenderUnits, AddonUnits, AddonSmoothing
+from .constants import BlenderTypes, BlenderUnits, AddonUnits, AddonSmoothing
 
 class Base_Filebrowser:
 
@@ -17,6 +17,7 @@ class Base_Filebrowser:
         description="Get the Unreal Engine 5 project directory",
     )
 
+    # show directories only
     filter_folder: BoolProperty(
         default=True,
         options={"HIDDEN"}
@@ -114,19 +115,29 @@ class OT_Reset(Operator):
         [stem, ext] = os.path.splitext(basename)
         bpy.context.scene.io_ue5_fbx.fp_file_name = stem
 
-        # set units based on Blender scene units
+        # set object type. Try to select the mesh if it exists
+        objs = bpy.context.view_layer.objects
+        for obj in objs:
+            if obj.type == BlenderTypes.MESH:
+                obj.select_set(True)
+                break
+
+        # set transform units based on Blender scene units
         if (units == BlenderUnits.NONE.value):
-            io_props.br_units = AddonUnits.FBX.name
-            io_props.br_scale = 1
+            io_props.tr_units = AddonUnits.FBX.name
+            io_props.tr_scale = 1
         elif (units == BlenderUnits.METRIC.value):
-            io_props.br_units = AddonUnits.LOCAL.name
-            io_props.br_scale = 0.01
+            io_props.tr_units = AddonUnits.LOCAL.name
+            io_props.tr_scale = 0.01
 
         # set smoothing modifier to prevent error in Unreal
-        io_props.br_smoothing = AddonSmoothing.FACE.name
+        io_props.tr_smoothing = AddonSmoothing.FACE.name
 
         # Armatures only. Prevent extra bones in Unreal skeleton asset
-        io_props.br_leaf_bones = False
+        io_props.ar_leaf_bones = False
+
+        # Armatures only. Bake animation frames
+        io_props.ar_bake_animation = True
 
         self.report({'INFO'}, f"Reset to Recommended Defaults")
         return {'FINISHED'}
@@ -136,7 +147,7 @@ class OT_Export(Operator):
 
     bl_idname = "op.export"
     bl_label = "Export FBX"
-    bl_description = "Export the FBX file"
+    bl_description = "Export selected objects to the FBX file"
 
 
     @classmethod
@@ -159,10 +170,13 @@ class OT_Export(Operator):
                           dir_name=io_props.fp_project_dir,
                           subdir_name=io_props.fp_project_subdir,
                           file_name=io_props.fp_file_name,
-                          scale=io_props.br_scale,
-                          units=io_props.br_units,
-                          smoothing=io_props.br_smoothing,
-                          add_leaf_bones = io_props.br_leaf_bones,
+                          selected_mesh = io_props.ob_mesh,
+                          selected_armature = io_props.ob_armature,
+                          scale=io_props.tr_scale,
+                          units=io_props.tr_units,
+                          smoothing=io_props.tr_smoothing,
+                          add_leaf_bones = io_props.ar_leaf_bones,
+                          bake_animation = io_props.ar_bake_animation,
                           )
         
         return {'FINISHED'}

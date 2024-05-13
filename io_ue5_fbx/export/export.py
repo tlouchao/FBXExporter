@@ -1,21 +1,43 @@
 import bpy
 import os
 import re
-from ..constants import AddonUnits, AddonSmoothing
+from ..constants import BlenderTypes, AddonUnits, AddonSmoothing
 
 
 def export_fbx(op,
                context,
-               dir_name,
-               subdir_name,
-               file_name,
-               scale=1,
-               units=AddonUnits.LOCAL.name,
-               smoothing=AddonSmoothing.FACE.name,
-               add_leaf_bones=False):
-    '''
+               dir_name = '',
+               subdir_name = '',
+               file_name = '',
+               selected_mesh = True,
+               selected_armature = False,
+               scale = 1,
+               units = AddonUnits.LOCAL.name,
+               smoothing = AddonSmoothing.FACE.name,
+               add_leaf_bones = False,
+               bake_animation = True,
+               ):
+    """
     Given the incoming UI properties, export the FBX File
-    '''
+
+    Keyword arguments:
+
+    op:      Operator. Passed in to get access to the report function
+    context: Context dependent on the area of Blender currently being accessed
+    
+    Optional keyword arguments:
+
+    dir_name:          Destination project directory
+    subdir_name:       Destination project subdirectory
+    file_name:         File name
+    selected_mesh:     Is a mesh selected?
+    selected_armature: Is an armature selected?
+    scale:             Scale factor
+    units:             Scale units ("All Local" is recommended)
+    smoothing:         Geometry smoothing ("Face" is recommended)
+    add_leaf_bones:    Is the option to add leaf bones unchecked?
+    bake_animation:    Is the option to bake animation checked?
+    """
 
     # -------------------------- Filepath ------------------------ #
 
@@ -25,7 +47,7 @@ def export_fbx(op,
     if os.path.isdir(dir_name):
         pass # do nothing, leave the directory name be
     else:
-        if (dir_name == '' or dir_name is None):
+        if not dir_name:
             if op: op.report({'WARNING'}, f"Empty project directory. " + \
                 f"Defaulting to {default_dir}")
         else:
@@ -53,7 +75,7 @@ def export_fbx(op,
     [stem, ext] = os.path.splitext(basename)
     is_valid_file_name = True
 
-    if (file_name == '' or file_name is None):
+    if not file_name:
         is_valid_file_name = False
         if op: op.report({'WARNING'}, f"{file_name} is empty." + \
             f"Defaulting to {basename}")
@@ -72,9 +94,14 @@ def export_fbx(op,
 
     # -------------------------- Blender ------------------------ #
     
+    # set object type
+    object_types = set()
+    if (selected_mesh):
+        object_types.add(BlenderTypes.MESH)
+    if (selected_armature):
+        object_types.add(BlenderTypes.ARMATURE)
+
     # set scale
-    if (units == AddonUnits.FBX.name):
-        scale = None
     global_scale = scale if scale else 1
     
     # set units
@@ -111,9 +138,11 @@ def export_fbx(op,
                             global_scale=global_scale,
                             apply_unit_scale=True, 
                             apply_scale_options=apply_scale_options,
-                            object_types={'MESH'},
+                            object_types=object_types,
                             mesh_smooth_type=mesh_smooth_type,
-                            add_leaf_bones=add_leaf_bones)
+                            add_leaf_bones=add_leaf_bones,
+                            bake_anim = bake_animation,
+                            )
 
     # TODO: handle backslash and forward slash 
     dir_concat = dir_concat.replace('/', '\\')
