@@ -113,14 +113,7 @@ def export_fbx(op,
             apply_scale_options = 'FBX_SCALE_UNITS'
 
     # set smoothing
-    mesh_smooth_type = 'FACE'
-    match smoothing:
-        case AddonSmoothing.FACE.name:
-            mesh_smooth_type = 'FACE'
-        case AddonSmoothing.EDGE.name:
-            mesh_smooth_type = 'EDGE'
-        case AddonSmoothing.NORMALS.name:
-            mesh_smooth_type = 'OFF'
+    mesh_smooth_type = smoothing
 
     # auto select active object, if nothing is selected
     if (not context.selected_objects):

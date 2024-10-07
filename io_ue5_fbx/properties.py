@@ -83,15 +83,17 @@ class PG_Properties(bpy.types.PropertyGroup):
         name="Scale",
         description="Scale Factor",
         precision=2,
-        default=1,
+        default=0.01,
+        soft_min=0,
+        soft_max=10,
     )
 
     tr_units: EnumProperty(
         name="Apply Scalings",
         description="Scene Units",
         items=[
-            (AddonUnits.LOCAL.name, AddonUnits.LOCAL.value, '', '', 0),
-            (AddonUnits.FBX.name, AddonUnits.FBX.value, '', '', 1)
+            (AddonUnits.LOCAL.name, AddonUnits.LOCAL.value, 'Apply custom scaling and units scaling to each object transformation, FBX scale remains at 1.0'),
+            (AddonUnits.FBX.name, AddonUnits.FBX.value, 'Apply custom scaling to each object transformation, and units scaling to FBX scale'),
         ],
         default=AddonUnits.LOCAL.name,
     )
@@ -100,9 +102,9 @@ class PG_Properties(bpy.types.PropertyGroup):
         name="Smoothing",
         description="Geometry Smoothing",
         items=[
-            (AddonSmoothing.FACE.name, AddonSmoothing.FACE.value, '', '', 0),
-            (AddonSmoothing.EDGE.name, AddonSmoothing.EDGE.value, '', '', 1),
-            (AddonSmoothing.NORMALS.name, AddonSmoothing.NORMALS.value, '', '', 2),
+            (AddonSmoothing.FACE.name, AddonSmoothing.FACE.value, 'Write face smoothing'),
+            (AddonSmoothing.EDGE.name, AddonSmoothing.EDGE.value, 'Write edge smoothing'),
+            (AddonSmoothing.OFF.name, AddonSmoothing.OFF.value, 'Export only normals instead of writing edge or face smoothing data'),
         ],
         default=AddonSmoothing.FACE.name,
     )
@@ -119,11 +121,6 @@ class PG_Properties(bpy.types.PropertyGroup):
         default=True,
     )
 
-
-pg_classes = [
-    PG_Properties,
-]
-
 def register():
     """
     Registers the property group class and adds it to the context
@@ -134,8 +131,7 @@ def register():
     
     # reference to properties at bpy.context.scene.io_ue5_fbx
     if not hasattr(bpy.types.Scene, 'io_ue5_fbx'):
-        bpy.types.Scene.io_ue5_fbx = \
-            PointerProperty(type=PG_Properties)
+        bpy.types.Scene.io_ue5_fbx = PointerProperty(type=PG_Properties)
 
 
 def unregister():

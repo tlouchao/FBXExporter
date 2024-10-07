@@ -31,5 +31,5 @@ class AddonUnits(Enum):
 class AddonSmoothing(Enum):
     FACE = 'Face (Recommended)'
     EDGE = 'Edge'
-    NORMALS = "Normals Only"
+    OFF = "Normals Only"
     

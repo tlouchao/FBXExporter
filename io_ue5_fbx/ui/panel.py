@@ -201,7 +201,9 @@ class VIEW3D_PT_Export(Base_Panel, bpy.types.Panel):
 
         # disable the Export button if the following is true:
         # at least one object is not selected, or file name is not defined
-        if (not io_props.fp_file_name or not context.selected_objects):
+        if (not io_props.fp_project_dir or
+            not io_props.fp_file_name or 
+            not context.selected_objects):
             row2.enabled = False
         else:
             row2.enabled = True
